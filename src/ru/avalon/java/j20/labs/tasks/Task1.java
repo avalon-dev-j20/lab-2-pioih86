@@ -2,8 +2,8 @@ package ru.avalon.java.j20.labs.tasks;
 
 import ru.avalon.java.j20.labs.Task;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Paths;
 
 /**
  * Задание №1
@@ -18,8 +18,9 @@ public class Task1 implements Task {
      */
     @Override
     public void run() throws IOException {
+        System.out.println(Paths.get("").toAbsolutePath());
         File input = new File("assets/countries.txt");
-        File output = new File("countries_binary_mode_output.txt");
+        File output = new File("assets/countries_binary_mode_output.txt");
         String text = read(input);
         write(output, text);
 
@@ -41,6 +42,7 @@ public class Task1 implements Task {
          *
          * 3. С использованием отладчика проверить корректность работы программы.
          */
+
     }
 
     /**
@@ -54,7 +56,17 @@ public class Task1 implements Task {
      * @throws IOException в случае ошибок ввода-вывода.
      */
     private String read(File file) throws IOException {
-        throw new UnsupportedOperationException("Not implement yet!");
+        StringBuilder result = new StringBuilder();
+        try (InputStream inputStream = new FileInputStream(file)) {
+            int character = 0;
+            do {
+                character = inputStream.read();
+                if (character != -1) {
+                    result.append((char)character);
+                }
+            } while (character != -1);
+        }
+        return result.toString();
     }
 
     /**
@@ -66,6 +78,11 @@ public class Task1 implements Task {
      * @throws IOException в случае ошибок ввода-вывода.
      */
     private void write(File file, String text) throws IOException {
-        throw new UnsupportedOperationException("Not implemented yet!");
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            char[] charArray = text.toCharArray();
+            for (char c: charArray) {
+                outputStream.write(c);
+            }
+        }
     }
 }

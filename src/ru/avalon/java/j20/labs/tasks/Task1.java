@@ -12,13 +12,13 @@ import java.nio.file.Paths;
  * в двоичном режиме".
  */
 public class Task1 implements Task {
+    long time = 0;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void run() throws IOException {
-        System.out.println(Paths.get("").toAbsolutePath());
         File input = new File("assets/countries.txt");
         File output = new File("assets/countries_binary_mode_output.txt");
         String text = read(input);
@@ -57,15 +57,14 @@ public class Task1 implements Task {
      */
     private String read(File file) throws IOException {
         StringBuilder result = new StringBuilder();
-        try (InputStream inputStream = new FileInputStream(file)) {
+        try (InputStream inputStream = new FileInputStream(file);
+             BufferedInputStream bufInStream = new BufferedInputStream(inputStream, 512)) {
             int character = 0;
-            do {
-                character = inputStream.read();
-                if (character != -1) {
-                    result.append((char)character);
-                }
-            } while (character != -1);
+            while ((character = bufInStream.read()) != -1) {
+                result.append((char) character);
+            }
         }
+
         return result.toString();
     }
 
@@ -78,11 +77,12 @@ public class Task1 implements Task {
      * @throws IOException в случае ошибок ввода-вывода.
      */
     private void write(File file, String text) throws IOException {
-        try (OutputStream outputStream = new FileOutputStream(file)) {
-            char[] charArray = text.toCharArray();
-            for (char c: charArray) {
-                outputStream.write(c);
+        try(OutputStream outputStream = new FileOutputStream(file);
+            ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream()) {
+            for (int i = 0; i < text.length(); i++) {
+                byteOutStream.write(text.charAt(i));
             }
+            byteOutStream.writeTo(outputStream);
         }
     }
 }

@@ -55,13 +55,12 @@ public class Task2 implements Task {
     private String read(File file) throws IOException {
         StringBuilder result = new StringBuilder();
         try (Reader reader = new FileReader(file)) {
-            int character = 0;
+            char[] charBuf = new char[100];
+            int end = 0;
             do {
-                character = reader.read();
-                if (character != -1) {
-                    result.append((char)character);
-                }
-            } while (character != -1);
+                end = reader.read(charBuf);
+                result.append(charBuf);
+            } while (end != -1);
         }
         return result.toString();
     }
